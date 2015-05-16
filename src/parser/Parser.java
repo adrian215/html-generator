@@ -4,10 +4,12 @@ import parser.exceptions.BadTokenException;
 import parser.expressions.*;
 import tokenizer.Token;
 import tokenizer.TokenType;
+import utils.ExpressionSupplier;
 
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.function.Supplier;
 
 import static tokenizer.TokenType.*;
 
@@ -41,6 +43,19 @@ public class Parser {
         return getToken().getType() == expected;
     }
 
+    private void check(PairResult<Boolean, Expression> operationParam, ExpressionSupplier<Expression> supplier) {
+        Expression result;
+        if(operationParam.getFirstValue().booleanValue() == false){
+            try {
+                result = supplier.get();
+                operationParam.setFirstValue(Boolean.TRUE);
+                operationParam.setSecondValue(result);
+            }catch (BadTokenException e) {
+                // wywolana nie ta funkcja, nie oznaczaj jako skonczone
+            }
+        }
+    }
+
     private Expression block() throws BadTokenException {
         List<Expression> expressions = new ArrayList<>();
 
@@ -67,15 +82,10 @@ public class Parser {
     }
 
     private Expression statement() throws BadTokenException {
-        Expression exp;
-        if(accept(DOLLAR))
-            exp = assign();
-        else if(accept(HASH)){
-            exp = declaration();
-        }
-        else
-            throw new BadTokenException();
-        return exp;
+        PairResult<Boolean, Expression> operationResult = new PairResult<Boolean, Expression>(Boolean.FALSE);
+        check(operationResult, this::assign);
+        check(operationResult, this::declaration);
+        return operationResult.getSecondValue();
     }
 
     private DeclarationExpression declaration() throws BadTokenException {
@@ -123,14 +133,14 @@ public class Parser {
         Expression value;
         if(accept(ASSIGN)) {
             advance();
-            value = expression();
+            value = operation();
         }
         else
             throw new BadTokenException();
         return new AssignExpression(variableName, value);
     }
 
-    private Expression expression() throws BadTokenException {
+    private Expression operation() throws BadTokenException {
         TextExpression exp;
         checkQuotes();
         if (accept(OTHER)) {
@@ -191,6 +201,31 @@ public class Parser {
 
     private Token getToken() {
         return currentToken;
+    }
+
+    private class PairResult<X, Y>{
+        private X firstValue;
+        private Y secondValue;
+
+        public PairResult(X firstValue) {
+            this.firstValue = firstValue;
+        }
+
+        public X getFirstValue() {
+            return firstValue;
+        }
+
+        public Y getSecondValue() {
+            return secondValue;
+        }
+
+        public void setFirstValue(X firstValue) {
+            this.firstValue = firstValue;
+        }
+
+        public void setSecondValue(Y secondValue) {
+            this.secondValue = secondValue;
+        }
     }
 
 }

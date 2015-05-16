@@ -24,5 +24,6 @@ public enum TokenType {
     ASSIGN,             // =
     AND,                // and
     OR,                 // or
+    NUMERIC,
     OTHER
 }

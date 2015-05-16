@@ -1,6 +1,9 @@
 package tokenizer;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Adrian on 2015-05-12.
@@ -129,6 +132,9 @@ public class Tokenizer {
         if (!isEmpty(buffer)) {
             if (tokens.containsKey(buffer.toString())) {
                 tokenResult.add(new Token(tokens.get(buffer.toString()), buffer.toString()));
+            }
+            else if (buffer.toString().matches("[0-9]+")){
+                tokenResult.add(new Token(TokenType.NUMERIC, buffer.toString()));
             }
             else
                 tokenResult.add(new Token(TokenType.OTHER, buffer.toString()));

@@ -82,20 +82,8 @@ public class Tokenizer {
                     buffer.append(reader.getChar());
                     reader.move();
                 }
-                else {
-                    buffer.append(c);
-                    reader.move();
-                }
-            } else if (!isAlphaNumeric(reader.getChar())){
-                flushBuffer(buffer);
-                clear(buffer);
-                buffer.append(c);
-                reader.move();
-            }
-            else {
-                buffer.append(c);
-                reader.move();
-            }
+                else dispatchDefault();
+            } else dispatchDefault();
 
             if (!reader.canMove()) {
                 flushBuffer(buffer);
@@ -104,6 +92,19 @@ public class Tokenizer {
         } while (reader.canMove());
         return tokenResult;
 
+    }
+
+    private void dispatchDefault() {
+        if (!isAlphaNumeric(reader.getChar())){
+            flushBuffer(buffer);
+            clear(buffer);
+            buffer.append(c);
+            reader.move();
+        }
+        else {
+            buffer.append(c);
+            reader.move();
+        }
     }
 
     private boolean isAlphaNumeric(char character) {

@@ -111,6 +111,73 @@ public class ParserTest {
     }
 
     @Test
+    public void conditionalTest() throws BadTokenException {
+        List<Token> tokens = Lists.newArrayList(
+                new Token(START, "<@"),
+                new Token(IF, "if"),
+                new Token(OPEN_BRACKET, "("),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "name"),
+                new Token(EQUALS, "=="),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "innaZmienna"),
+                new Token(AND, "and"),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "innaZmienna"),
+                new Token(EQUALS, "=="),
+                new Token(QUOTES, "\""),
+                new Token(OTHER, "innaZmienna"),
+                new Token(QUOTES, "\""),
+                new Token(CLOSE_BRACKET, ")"),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "jeszczeInnaZmienna"),
+                new Token(ASSIGN, "="),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "jeszczeInnaZmienna2"),
+                new Token(STOP, "@>")
+        );
+        Parser parser = new Parser(tokens);
+        Expression parse = parser.parse();
+    }
+
+    @Test
+    public void conditionalBlockTest() throws BadTokenException {
+        List<Token> tokens = Lists.newArrayList(
+                new Token(START, "<@"),
+                new Token(IF, "if"),
+                new Token(OPEN_BRACKET, "("),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "name"),
+                new Token(EQUALS, "=="),
+                new Token(NUMERIC, "12"),
+                new Token(OR, "or"),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "inna"),
+                new Token(EQUALS, "=="),
+                new Token(QUOTES, "\""),
+                new Token(OTHER, "a"),
+                new Token(QUOTES, "\""),
+                new Token(AND, "and"),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "innaZmienna"),
+                new Token(EQUALS, "=="),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "inna"),
+                new Token(CLOSE_BRACKET, ")"),
+                new Token(OPEN_CURLY_BRACES, "{"),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "a"),
+                new Token(ASSIGN, "="),
+                new Token(NUMERIC, "12"),
+                new Token(SEMICOLON, ";"),
+                new Token(CLOSE_CURLY_BRACES, "}"),
+                new Token(STOP, "@>")
+        );
+        Parser parser = new Parser(tokens);
+        Expression parse = parser.parse();
+    }
+
+    @Test
     public void declarationFunctionTest() throws BadTokenException {
         List<Token> tokens = Lists.newArrayList(
                 new Token(START, "<@"),

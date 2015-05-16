@@ -7,5 +7,8 @@ public enum Operator {
     PLUS,
     MINUS,
     MULTIPLICATION,
-    DIVISION
+    DIVISION,
+    OR,
+    AND,
+    EQUALS
 }

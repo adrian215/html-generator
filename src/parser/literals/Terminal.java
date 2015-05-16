@@ -1,12 +1,14 @@
-package parser.expressions;
+package parser.literals;
+
+import parser.expressions.Expression;
 
 /**
  * Created by Adrian on 2015-05-14.
  */
-public class TextExpression extends Expression {
+public class Terminal extends Expression {
     private final String value;
 
-    public TextExpression(String value) {
+    public Terminal(String value) {
         this.value = value;
     }
 

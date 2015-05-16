@@ -22,6 +22,10 @@ public enum TokenType {
     FALSE,              // false
     EQUALS,             // ==
     ASSIGN,             // =
+    PLUS,               // +
+    MULLTIPLICATION,    // *
+    DIVISION,           // /
+    MINUS,              // -
     AND,                // and
     OR,                 // or
     NUMERIC,

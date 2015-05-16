@@ -27,6 +27,7 @@ public class Tokenizer {
             resultMap.put("if", TokenType.IF);
             resultMap.put("else", TokenType.ELSE);
             resultMap.put("for", TokenType.FOR);
+            resultMap.put("to", TokenType.TO);
             resultMap.put("true", TokenType.TRUE);
             resultMap.put("false", TokenType.FALSE);
             resultMap.put("==", TokenType.EQUALS);

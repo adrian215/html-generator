@@ -108,8 +108,70 @@ public class Parser {
         check(operationResult, this::assign);
         check(operationResult, this::declaration);
         check(operationResult, this::conditional);
+        check(operationResult, this::loop);
+        check(operationResult, this::call);
         if(operationResult.getFirstValue().booleanValue() == true) {
             return operationResult.getSecondValue();
+        }
+        else
+            throw new BadTokenException();
+    }
+
+    private Expression call() throws BadTokenException {
+        String methodName;
+        List<Expression> params;
+        methodName = getName();
+        if(accept(OPEN_BRACKET))
+            advance();
+        else
+            throw new BadTokenException();
+
+        params = callParams();
+
+        if(accept(CLOSE_BRACKET))
+            advance();
+        else
+            throw new BadTokenException();
+
+        return new CallExpression(methodName, params);
+    }
+
+    private List<Expression> callParams() throws BadTokenException {
+        List<Expression> params = new ArrayList<>();
+        try {
+            Expression firstParam = operation();
+        }catch (BadTokenException e) {
+            //return empty list - no arguments
+            return params;
+        }
+        while (accept(COMMA)){
+            advance();
+            params.add(operation());
+        }
+        return params;
+    }
+
+    private Expression loop() throws BadTokenException {
+        Expression from, to, statements;
+        if(accept(FOR)){
+            advance();
+            if(accept(OPEN_BRACKET))
+                advance();
+            else
+                throw new BadTokenException();
+            from = variableCall();
+            if(accept(TO))
+                advance();
+            else
+                throw new BadTokenException();
+            to = variableCall();
+            if(accept(CLOSE_BRACKET))
+                advance();
+            else
+                throw new BadTokenException();
+            statements = block();
+
+            return new LoopExpression(from, to, statements);
         }
         else
             throw new BadTokenException();

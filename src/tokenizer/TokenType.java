@@ -18,6 +18,7 @@ public enum TokenType {
     IF,                 // if
     ELSE,               // else
     FOR,                // for
+    TO,                // to
     TRUE,               // true
     FALSE,              // false
     EQUALS,             // ==

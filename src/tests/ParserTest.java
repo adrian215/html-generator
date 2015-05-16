@@ -178,6 +178,76 @@ public class ParserTest {
     }
 
     @Test
+    public void loopTest() throws BadTokenException {
+        List<Token> tokens = Lists.newArrayList(
+                new Token(START, "<@"),
+                new Token(FOR, "for"),
+                new Token(OPEN_BRACKET, "("),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "name"),
+                new Token(TO, "to"),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "innaZmienna"),
+                new Token(CLOSE_BRACKET, ")"),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "jeszczeInnaZmienna"),
+                new Token(ASSIGN, "="),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "jeszczeInnaZmienna2"),
+                new Token(STOP, "@>")
+        );
+        Parser parser = new Parser(tokens);
+        Expression parse = parser.parse();
+    }
+
+    @Test
+    public void callMethodNoArgsTest() throws BadTokenException {
+        List<Token> tokens = Lists.newArrayList(
+                new Token(START, "<@"),
+                new Token(OTHER, "name"),
+                new Token(OPEN_BRACKET, "("),
+                new Token(CLOSE_BRACKET, ")"),
+                new Token(STOP, "@>")
+        );
+        Parser parser = new Parser(tokens);
+        Expression parse = parser.parse();
+    }
+
+    @Test
+    public void callMethodOneArgTest() throws BadTokenException {
+        List<Token> tokens = Lists.newArrayList(
+                new Token(START, "<@"),
+                new Token(OTHER, "name"),
+                new Token(OPEN_BRACKET, "("),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "name"),
+                new Token(CLOSE_BRACKET, ")"),
+                new Token(STOP, "@>")
+        );
+        Parser parser = new Parser(tokens);
+        Expression parse = parser.parse();
+    }
+
+    @Test
+    public void callMethodTwoArgsTest() throws BadTokenException {
+        List<Token> tokens = Lists.newArrayList(
+                new Token(START, "<@"),
+                new Token(OTHER, "name"),
+                new Token(OPEN_BRACKET, "("),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "name"),
+                new Token(COMMA, ","),
+                new Token(QUOTES, "\""),
+                new Token(OTHER, "text"),
+                new Token(QUOTES, "\""),
+                new Token(CLOSE_BRACKET, ")"),
+                new Token(STOP, "@>")
+        );
+        Parser parser = new Parser(tokens);
+        Expression parse = parser.parse();
+    }
+
+    @Test
     public void declarationFunctionTest() throws BadTokenException {
         List<Token> tokens = Lists.newArrayList(
                 new Token(START, "<@"),

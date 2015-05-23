@@ -3,6 +3,7 @@ package parser.operations.implementations;
 import parser.literals.Operator;
 import parser.operations.BoolOperation;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -12,17 +13,34 @@ public class BoolOperationExpression implements BoolOperation {
 
     private final BoolOperation firstArgument;
     private final List<Operator> operators;
-    private final List<BoolOperation> weakArguments;
+    private final List<BoolOperation> arguments;
 
-    public BoolOperationExpression(BoolOperation firstArgument, List<Operator> operators, List<BoolOperation> weakArguments) {
+    public BoolOperationExpression(BoolOperation firstArgument, List<Operator> operators, List<BoolOperation> aguments) {
         this.firstArgument = firstArgument;
         this.operators = operators;
-        this.weakArguments = weakArguments;
+        this.arguments = aguments;
     }
 
-    //TODO implement boolean call
     @Override
     public Boolean get() {
-        return null;
+        boolean result = firstArgument.get();
+        Iterator<BoolOperation> argumentsIterator = arguments.iterator();
+
+        for (Operator operator : operators) {
+            boolean currentArgumentValue = argumentsIterator.next().get();
+            result = check(result, operator, currentArgumentValue);
+        }
+
+        return result;
+    }
+
+    private boolean check(boolean argument1, Operator operator, boolean argument2) {
+        if (operator == Operator.AND) {
+            return argument1 && argument2;
+        }
+        else if (operator == Operator.OR) {
+            return argument1 || argument2;
+        }
+        return false;
     }
 }

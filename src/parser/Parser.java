@@ -339,16 +339,11 @@ public class Parser {
     }
 
     private BoolOperation strongBoolArgument() throws BadTokenException {
-        Operation firstArgument = terminal();
-        List<Operator> operators = new ArrayList<>();
-        List<Operation> strongArguments = new ArrayList<>();
-
-        while(accept(EQUALS)){
-            operators.add(mapOperator(getToken().getType()));
-            advance();
-            strongArguments.add(terminal());
-        }
-        return new BoolEqual(firstArgument, operators, strongArguments);
+        MathOperation firstArgument = terminal();
+        Operator operator = mapOperator(getToken().getType());
+        advance();
+        MathOperation secondArgument = terminal();
+        return new BoolEqual(firstArgument, operator, secondArgument);
     }
 
     private MathOperation variableCall() throws BadTokenException {

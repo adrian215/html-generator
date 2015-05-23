@@ -2,8 +2,11 @@ package parser;
 
 import parser.exceptions.BadTokenException;
 import parser.expressions.*;
+import parser.expressions.implementations.*;
 import parser.literals.Operator;
-import parser.literals.Terminal;
+import parser.operations.*;
+import parser.expressions.implementations.CallExpression;
+import parser.operations.implementations.*;
 import tokenizer.Token;
 import tokenizer.TokenType;
 import utils.ExpressionSupplier;
@@ -18,12 +21,10 @@ import static tokenizer.TokenType.*;
  * Created by Adrian on 2015-05-13.
  */
 public class Parser {
-    private final List<Token> tokens;
     private Iterator<Token> tokenIterator;
     private Token currentToken;
 
     public Parser(List<Token> tokens) {
-        this.tokens = tokens;
         tokenIterator = tokens.iterator();
         advance();
     }
@@ -46,7 +47,7 @@ public class Parser {
 
     private void check(PairResult<Boolean, Expression> operationParam, ExpressionSupplier<Expression> supplier) {
         Expression result;
-        if(operationParam.getFirstValue().booleanValue() == false){
+        if(!operationParam.getFirstValue()){
             try {
                 result = supplier.get();
                 operationParam.setFirstValue(Boolean.TRUE);
@@ -104,13 +105,13 @@ public class Parser {
     }
 
     private Expression statement() throws BadTokenException {
-        PairResult<Boolean, Expression> operationResult = new PairResult<Boolean, Expression>(Boolean.FALSE);
+        PairResult<Boolean, Expression> operationResult = new PairResult<>(Boolean.FALSE);
         check(operationResult, this::assign);
         check(operationResult, this::declaration);
         check(operationResult, this::conditional);
         check(operationResult, this::loop);
         check(operationResult, this::call);
-        if(operationResult.getFirstValue().booleanValue() == true) {
+        if(operationResult.getFirstValue()) {
             return operationResult.getSecondValue();
         }
         else
@@ -119,7 +120,7 @@ public class Parser {
 
     private Expression call() throws BadTokenException {
         String methodName;
-        List<Expression> params;
+        List<Operation> params;
         methodName = getName();
         if(accept(OPEN_BRACKET))
             advance();
@@ -136,10 +137,11 @@ public class Parser {
         return new CallExpression(methodName, params);
     }
 
-    private List<Expression> callParams() throws BadTokenException {
-        List<Expression> params = new ArrayList<>();
+    private List<Operation> callParams() throws BadTokenException {
+        List<Operation> params = new ArrayList<>();
         try {
-            Expression firstParam = operation();
+            Operation firstParam = operation();
+            params.add(firstParam);
         }catch (BadTokenException e) {
             //return empty list - no arguments
             return params;
@@ -152,7 +154,8 @@ public class Parser {
     }
 
     private Expression loop() throws BadTokenException {
-        Expression from, to, statements;
+        Operation from, to;
+        Expression statements;
         if(accept(FOR)){
             advance();
             if(accept(OPEN_BRACKET))
@@ -178,7 +181,7 @@ public class Parser {
     }
 
     private Expression conditional() throws BadTokenException {
-        Expression condition;
+        Operation condition;
         Expression statements;
         if(accept(IF))
         {
@@ -246,7 +249,7 @@ public class Parser {
 
     private Expression assign() throws BadTokenException {
         String variableName = variableName();
-        Expression value;
+        Operation value;
         if(accept(ASSIGN)) {
             advance();
             value = operation();
@@ -256,10 +259,10 @@ public class Parser {
         return new AssignExpression(variableName, value);
     }
 
-    private Expression operation() throws BadTokenException {
-        Expression firstArgument = weakArgument();
+    private MathOperation operation() throws BadTokenException {
+        MathOperation firstArgument = weakArgument();
         List<Operator> operators = new ArrayList<>();
-        List<Expression> weakArguments = new ArrayList<>();
+        List<MathOperation> weakArguments = new ArrayList<>();
 
         while(accept(PLUS) || accept(MINUS)){
             operators.add(mapOperator(getToken().getType()));
@@ -269,10 +272,10 @@ public class Parser {
         return new OperationExpression(firstArgument, operators, weakArguments);
     }
 
-    private OperationExpression weakArgument() throws BadTokenException {
-        Expression firstArgument = terminal();
+    private MathOperation weakArgument() throws BadTokenException {
+        MathOperation firstArgument = terminal();
         List<Operator> operators = new ArrayList<>();
-        List<Expression> strongArguments = new ArrayList<>();
+        List<MathOperation> strongArguments = new ArrayList<>();
 
         while(accept(MULLTIPLICATION) || accept(DIVISION)){
             operators.add(mapOperator(getToken().getType()));
@@ -282,17 +285,17 @@ public class Parser {
         return new OperationExpression(firstArgument, operators, strongArguments);
     }
 
-    private Expression terminal() throws BadTokenException {
-        Expression result;
+    private MathOperation terminal() throws BadTokenException {
+        MathOperation result;
         if (accept(NUMERIC)) {
-            result = new Terminal(getToken().getParameter());
+            result = new Const(getToken().getParameter());
             advance();
             return result;
         }
         else if(accept(QUOTES)){
             advance();
             if(accept(OTHER)) {
-                result = new Terminal(getToken().getParameter());
+                result = new Const(getToken().getParameter());
                 advance();
             }
             else
@@ -309,47 +312,46 @@ public class Parser {
             return variableCall();
     }
 
-    //    TODO implement
-    private Expression booleanOperation() throws BadTokenException {
-        Expression firstArgument = weakBoolArgument();
+    private BoolOperation booleanOperation() throws BadTokenException {
+        BoolOperation firstArgument = weakBoolArgument();
         List<Operator> operators = new ArrayList<>();
-        List<Expression> weakArguments = new ArrayList<>();
+        List<BoolOperation> weakArguments = new ArrayList<>();
 
         while(accept(OR)){
             operators.add(mapOperator(getToken().getType()));
             advance();
             weakArguments.add(weakBoolArgument());
         }
-        return new OperationExpression(firstArgument, operators, weakArguments);
+        return new BoolOperationExpression(firstArgument, operators, weakArguments);
     }
 
-    private Expression weakBoolArgument() throws BadTokenException {
-        Expression firstArgument = strongBoolArgument();
+    private BoolOperation weakBoolArgument() throws BadTokenException {
+        BoolOperation firstArgument = strongBoolArgument();
         List<Operator> operators = new ArrayList<>();
-        List<Expression> strongArguments = new ArrayList<>();
+        List<BoolOperation> strongArguments = new ArrayList<>();
 
         while(accept(AND)){
             operators.add(mapOperator(getToken().getType()));
             advance();
             strongArguments.add(strongBoolArgument());
         }
-        return new OperationExpression(firstArgument, operators, strongArguments);
+        return new BoolOperationExpression(firstArgument, operators, strongArguments);
     }
 
-    private Expression strongBoolArgument() throws BadTokenException {
-        Expression firstArgument = terminal();
+    private BoolOperation strongBoolArgument() throws BadTokenException {
+        Operation firstArgument = terminal();
         List<Operator> operators = new ArrayList<>();
-        List<Expression> strongArguments = new ArrayList<>();
+        List<Operation> strongArguments = new ArrayList<>();
 
         while(accept(EQUALS)){
             operators.add(mapOperator(getToken().getType()));
             advance();
             strongArguments.add(terminal());
         }
-        return new OperationExpression(firstArgument, operators, strongArguments);
+        return new BoolEqual(firstArgument, operators, strongArguments);
     }
 
-    private Expression variableCall() throws BadTokenException {
+    private MathOperation variableCall() throws BadTokenException {
         String variableName;
         variableName = variableName();
         return new VariableExpression(variableName);

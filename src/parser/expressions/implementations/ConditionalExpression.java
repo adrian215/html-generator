@@ -18,7 +18,7 @@ public class ConditionalExpression extends StoringContextExpression {
 
     //TODO implement conditional call
     @Override
-    public void call() {
+    protected void call() {
 
     }
 

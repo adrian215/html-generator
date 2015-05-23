@@ -1,5 +1,7 @@
 package parser.operations.implementations;
 
+import generator.StackManager;
+import generator.Variable;
 import parser.expressions.Expression;
 import parser.operations.MathOperation;
 import parser.operations.Operation;
@@ -9,18 +11,19 @@ import parser.operations.Operation;
  */
 public class VariableExpression implements MathOperation {
     private final String name;
+    private final StackManager stackManager = StackManager.getStackManager();
 
     public VariableExpression(String name) {
         this.name = name;
     }
 
-    //TODO implement variable call
     @Override
     public String get() {
-        return null;
+        return returnVariableValue(stackManager.getVariable(name));
     }
 
-    public String getName() {
-        return name;
+    private String returnVariableValue(Variable variable) {
+        return variable.getValue();
     }
+
 }

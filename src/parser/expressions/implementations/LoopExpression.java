@@ -20,7 +20,7 @@ public class LoopExpression extends StoringContextExpression {
 
     //TODO implement loop call
     @Override
-    public void call() {
+    protected void call() {
 
     }
 

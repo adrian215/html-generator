@@ -4,6 +4,7 @@ import com.google.common.collect.Lists;
 import generator.Method;
 import generator.StackManager;
 import generator.Variable;
+import org.junit.Before;
 import org.junit.Test;
 import parser.expressions.Expression;
 import parser.expressions.implementations.BlockExpression;
@@ -19,6 +20,10 @@ import static org.junit.Assert.assertNull;
  * Created by Adrian on 2015-05-23.
  */
 public class StackTest {
+    @Before
+    public void setUp() throws Exception {
+        StackManager.cleanAll();
+    }
 
     @Test
     public void testStackVariablePush() {

@@ -1,5 +1,6 @@
 package parser.expressions.implementations;
 
+import generator.Method;
 import parser.expressions.Expression;
 
 import java.util.List;
@@ -7,7 +8,7 @@ import java.util.List;
 /**
  * Created by Adrian on 2015-05-15.
  */
-public class DeclarationExpression implements Expression {
+public class DeclarationExpression extends Expression {
     private final String name;
     private final List<String> params;
     private final Expression statements;
@@ -18,21 +19,9 @@ public class DeclarationExpression implements Expression {
         this.statements = statements;
     }
 
-    //TODO implement declaration
     @Override
     public void process() {
-
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public List<String> getParams() {
-        return params;
-    }
-
-    public Expression getStatements() {
-        return statements;
+        Method method = new Method(name, params, statements);
+        stackManager.putMethod(method);
     }
 }

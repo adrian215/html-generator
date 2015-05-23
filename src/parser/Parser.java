@@ -120,7 +120,7 @@ public class Parser {
 
     private Expression call() throws BadTokenException {
         String methodName;
-        List<Operation> params;
+        List<MathOperation> params;
         methodName = getName();
         if(accept(OPEN_BRACKET))
             advance();
@@ -137,10 +137,10 @@ public class Parser {
         return new CallExpression(methodName, params);
     }
 
-    private List<Operation> callParams() throws BadTokenException {
-        List<Operation> params = new ArrayList<>();
+    private List<MathOperation> callParams() throws BadTokenException {
+        List<MathOperation> params = new ArrayList<>();
         try {
-            Operation firstParam = operation();
+            MathOperation firstParam = operation();
             params.add(firstParam);
         }catch (BadTokenException e) {
             //return empty list - no arguments
@@ -249,7 +249,7 @@ public class Parser {
 
     private Expression assign() throws BadTokenException {
         String variableName = variableName();
-        Operation value;
+        MathOperation value;
         if(accept(ASSIGN)) {
             advance();
             value = operation();

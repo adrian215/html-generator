@@ -3,9 +3,9 @@ package parser.expressions;
 /**
  * Created by Adrian on 2015-05-23.
  */
-public abstract class StoringContextExpression implements Expression{
+public abstract class StoringContextExpression extends Expression {
 
-    public abstract void call();
+    protected abstract void call();
 
     @Override
     public void process() {
@@ -14,13 +14,11 @@ public abstract class StoringContextExpression implements Expression{
         restoreContext();
     }
 
-    //TODO implement storing context
-    public void storeContext(){
-
+    private void storeContext(){
+        stackManager.pushCurrent();
     }
 
-    //TODO implement restoring context
-    public void restoreContext(){
-
+    private void restoreContext(){
+        stackManager.popCurrent();
     }
 }

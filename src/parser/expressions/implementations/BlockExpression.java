@@ -17,7 +17,7 @@ public class BlockExpression extends StoringContextExpression {
 
     //TODO implement block call
     @Override
-    public void call() {
+    protected void call() {
 
     }
 }

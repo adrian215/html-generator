@@ -51,4 +51,8 @@ public class StackManager {
             methods = methodStack.pop();
         }
     }
+
+    public static void cleanAll() {
+        stackManager = new StackManager();
+    }
 }

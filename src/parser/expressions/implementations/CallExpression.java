@@ -1,9 +1,12 @@
 package parser.expressions.implementations;
 
+import generator.Method;
 import parser.expressions.Expression;
 import parser.expressions.StoringContextExpression;
+import parser.operations.MathOperation;
 import parser.operations.Operation;
 
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -11,24 +14,30 @@ import java.util.List;
  */
 public class CallExpression extends StoringContextExpression {
     private final String methodName;
-    private final List<Operation> params;
+    private final List<MathOperation> params;
 
-    public CallExpression(String methodName, List<Operation> params) {
+    public CallExpression(String methodName, List<MathOperation> params) {
         this.methodName = methodName;
         this.params = params;
     }
 
-    //TODO implement method call
     @Override
-    public void call() {
+    protected void call() {
+        Method method = stackManager.getMethod(methodName);
+        initializeParamsVariables(method);
+        method.getStatements().process();
 
     }
 
-    public String getMethodName() {
-        return methodName;
+    private void initializeParamsVariables(Method method) {
+        Iterator<String> paramsNamesIterator = method.getParams().iterator();
+        for (MathOperation param : params) {
+            String paramName = paramsNamesIterator.next();
+            createLocalParamVariable(param, paramName);
+        }
     }
 
-    public List<Operation> getParams() {
-        return params;
+    private void createLocalParamVariable(MathOperation param, String paramName) {
+        new AssignExpression(paramName, param).process();
     }
 }

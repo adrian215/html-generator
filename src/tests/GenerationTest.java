@@ -8,6 +8,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mockito;
+import parser.exceptions.GenerationException;
 import parser.expressions.Expression;
 import parser.expressions.implementations.*;
 import parser.literals.Operator;
@@ -36,7 +37,7 @@ public class GenerationTest {
     }
 
     @Test
-    public void testVariableAssign() {
+    public void testVariableAssign() throws GenerationException {
         //given
         final String VARIABLE_NAME = "variable";
         final String VARIABLE_VALUE = "1";
@@ -86,7 +87,7 @@ public class GenerationTest {
 
     }
 
-    @Test
+    @Test(expected = GenerationException.class)
     public void testMethodCall() throws Exception {
         //given
         String TEST_VARIABLE_NAME = "test";
@@ -99,7 +100,7 @@ public class GenerationTest {
         StackManager stackManager = StackManager.getStackManager();
         Expression statement = new Expression() {
             @Override
-            public void process() {
+            public void process() throws GenerationException {
                 stackManager.putVariable(testVariable);
                 assertEquals(testVariable, stackManager.getVariable(TEST_VARIABLE_NAME));
                 assertEquals(PARAM_VALUE, stackManager.getVariable(PARAM_NAME).getValue());
@@ -110,7 +111,7 @@ public class GenerationTest {
         //when
         callExpression.process();
         //then
-        assertNull(stackManager.getVariable(TEST_VARIABLE_NAME));
+        stackManager.getVariable(TEST_VARIABLE_NAME);
     }
 
     @Test

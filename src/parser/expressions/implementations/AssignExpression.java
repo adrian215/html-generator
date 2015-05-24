@@ -1,6 +1,7 @@
 package parser.expressions.implementations;
 
 import generator.Variable;
+import parser.exceptions.GenerationException;
 import parser.expressions.Expression;
 import parser.operations.MathOperation;
 import parser.operations.Operation;
@@ -18,7 +19,7 @@ public class AssignExpression extends Expression {
     }
 
     @Override
-    public void process() {
+    public void process() throws GenerationException {
         String variableValue = expression.get();
         Variable variable = new Variable(variableName, variableValue);
         stackManager.putVariable(variable);

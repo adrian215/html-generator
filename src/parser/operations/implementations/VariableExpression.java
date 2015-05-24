@@ -2,6 +2,7 @@ package parser.operations.implementations;
 
 import generator.StackManager;
 import generator.Variable;
+import parser.exceptions.GenerationException;
 import parser.expressions.Expression;
 import parser.operations.MathOperation;
 import parser.operations.Operation;
@@ -18,7 +19,7 @@ public class VariableExpression implements MathOperation {
     }
 
     @Override
-    public String get() {
+    public String get() throws GenerationException {
         return returnVariableValue(stackManager.getVariable(name));
     }
 

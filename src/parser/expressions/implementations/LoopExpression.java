@@ -1,5 +1,6 @@
 package parser.expressions.implementations;
 
+import parser.exceptions.GenerationException;
 import parser.expressions.Expression;
 import parser.expressions.StoringContextExpression;
 import parser.operations.MathOperation;
@@ -31,6 +32,8 @@ public class LoopExpression extends StoringContextExpression {
             }
         } catch (NumberFormatException e){
             // bad argument, loop should not execute
+        } catch (GenerationException e) {
+            e.printStackTrace();
         }
     }
 

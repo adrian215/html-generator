@@ -1,5 +1,6 @@
 import parser.Parser;
 import parser.exceptions.BadTokenException;
+import parser.exceptions.GenerationException;
 import parser.expressions.Expression;
 import tokenizer.Token;
 import tokenizer.Tokenizer;
@@ -19,7 +20,10 @@ public class Main {
         Parser parser = new Parser(tokenList);
         try {
             parseProduction = parser.parse();
+            parseProduction.process();
         } catch (BadTokenException e) {
+            e.printStackTrace();
+        } catch (GenerationException e) {
             e.printStackTrace();
         }
     }

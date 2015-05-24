@@ -1,5 +1,6 @@
 package parser.operations.implementations;
 
+import parser.exceptions.GenerationException;
 import parser.literals.Operator;
 import parser.operations.BoolOperation;
 
@@ -22,7 +23,7 @@ public class BoolOperationExpression implements BoolOperation {
     }
 
     @Override
-    public Boolean get() {
+    public Boolean get() throws GenerationException {
         boolean result = firstArgument.get();
         Iterator<BoolOperation> argumentsIterator = arguments.iterator();
 

@@ -1,5 +1,7 @@
 package generator;
 
+import parser.exceptions.GenerationException;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Stack;
@@ -26,16 +28,22 @@ public class StackManager {
         variables.put(variable.getName(), variable);
     }
 
-    public Variable getVariable(String variableName) {
-        return variables.get(variableName);
+    public Variable getVariable(String variableName) throws GenerationException {
+        Variable result = variables.get(variableName);
+        if(result == null)
+            throw new GenerationException();
+        return result;
     }
 
     public void putMethod(Method method) {
         methods.put(method.getName(), method);
     }
 
-    public Method getMethod(String methodName) {
-        return methods.get(methodName);
+    public Method getMethod(String methodName) throws GenerationException {
+        Method result = methods.get(methodName);
+        if(result == null)
+            throw new GenerationException();
+        return result;
     }
 
     public void pushCurrent(){

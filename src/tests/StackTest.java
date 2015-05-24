@@ -6,6 +6,7 @@ import generator.StackManager;
 import generator.Variable;
 import org.junit.Before;
 import org.junit.Test;
+import parser.exceptions.GenerationException;
 import parser.expressions.Expression;
 import parser.expressions.implementations.BlockExpression;
 import parser.expressions.implementations.CallExpression;
@@ -26,7 +27,7 @@ public class StackTest {
     }
 
     @Test
-    public void testStackVariablePush() {
+    public void testStackVariablePush() throws GenerationException {
         //given
         final String VARIABLE_NAME = "variable";
         StackManager stackManager = StackManager.getStackManager();
@@ -38,7 +39,16 @@ public class StackTest {
         assertEquals(variable, gotVariable);
     }
 
-    @Test
+    @Test(expected = GenerationException.class)
+    public void testStackVariablePopVariableThatNotExist() throws GenerationException {
+        //given
+        final String VARIABLE_NAME = "variable";
+        StackManager stackManager = StackManager.getStackManager();
+        //when
+        Variable gotVariable = stackManager.getVariable(VARIABLE_NAME);
+    }
+
+    @Test(expected = GenerationException.class)
     public void testStackVariablePushWithContextStore() throws Exception {
         //given
         final String VARIABLE1_NAME = "variable1";
@@ -55,11 +65,11 @@ public class StackTest {
         stackManager.popCurrent();
         //then
         assertEquals(variable1, stackManager.getVariable(VARIABLE1_NAME));
-        assertNull(stackManager.getVariable(VARIABLE2_NAME));
+        stackManager.getVariable(VARIABLE2_NAME);
     }
 
     @Test
-    public void testStackMethodPush() {
+    public void testStackMethodPush() throws GenerationException {
         //given
         final String METHOD_NAME = "methodName";
         final List<String> params = Lists.newArrayList("param1", "param2");
@@ -73,7 +83,7 @@ public class StackTest {
         assertEquals(method, gotMethod);
     }
 
-    @Test
+    @Test(expected = GenerationException.class)
     public void testStackMethodPushWithContextStore() throws Exception {
         //given
         final String METHOD1_NAME = "methodName1";
@@ -90,6 +100,6 @@ public class StackTest {
         stackManager.popCurrent();
         //then
         assertEquals(method1, stackManager.getMethod(METHOD1_NAME));
-        assertNull(stackManager.getMethod(METHOD2_NAME));
+        stackManager.getMethod(METHOD2_NAME);
     }
 }

@@ -1,5 +1,6 @@
 package parser.expressions.implementations;
 
+import parser.exceptions.GenerationException;
 import parser.expressions.Expression;
 import parser.expressions.StoringContextExpression;
 
@@ -16,7 +17,7 @@ public class BlockExpression extends StoringContextExpression {
     }
 
     @Override
-    protected void call() {
+    protected void call() throws GenerationException {
         for (Expression expression : expressions) {
             expression.process();
         }

@@ -1,6 +1,7 @@
 package parser.expressions.implementations;
 
 import generator.Method;
+import parser.exceptions.GenerationException;
 import parser.expressions.Expression;
 import parser.expressions.StoringContextExpression;
 import parser.operations.MathOperation;
@@ -22,14 +23,14 @@ public class CallExpression extends StoringContextExpression {
     }
 
     @Override
-    protected void call() {
+    protected void call() throws GenerationException {
         Method method = stackManager.getMethod(methodName);
         initializeParamsVariables(method);
         method.getStatements().process();
 
     }
 
-    private void initializeParamsVariables(Method method) {
+    private void initializeParamsVariables(Method method) throws GenerationException {
         Iterator<String> paramsNamesIterator = method.getParams().iterator();
         for (MathOperation param : params) {
             String paramName = paramsNamesIterator.next();
@@ -37,7 +38,7 @@ public class CallExpression extends StoringContextExpression {
         }
     }
 
-    private void createLocalParamVariable(MathOperation param, String paramName) {
+    private void createLocalParamVariable(MathOperation param, String paramName) throws GenerationException {
         new AssignExpression(paramName, param).process();
     }
 }

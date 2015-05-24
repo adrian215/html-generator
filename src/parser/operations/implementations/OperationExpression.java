@@ -1,5 +1,6 @@
 package parser.operations.implementations;
 
+import parser.exceptions.GenerationException;
 import parser.expressions.Expression;
 import parser.literals.Operator;
 import parser.operations.MathOperation;
@@ -23,7 +24,7 @@ public class OperationExpression implements MathOperation {
     }
 
     @Override
-    public String get() {
+    public String get() throws GenerationException {
         String result = firstArgument.get();
         Iterator<MathOperation> currentArgumentIterator = weakArguments.iterator();
         for (Operator operator : operators) {

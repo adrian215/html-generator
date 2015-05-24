@@ -1,5 +1,6 @@
 package parser.operations.implementations;
 
+import parser.exceptions.GenerationException;
 import parser.literals.Operator;
 import parser.operations.BoolOperation;
 import parser.operations.MathOperation;
@@ -22,7 +23,7 @@ public class BoolEqual implements BoolOperation {
     }
 
     @Override
-    public Boolean get() {
+    public Boolean get() throws GenerationException {
         if(operator == Operator.EQUALS)
             return objectEquals(firstArgument.get(), secondArgument.get());
         return false;

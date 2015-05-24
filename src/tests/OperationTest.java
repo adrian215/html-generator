@@ -2,6 +2,7 @@ package tests;
 
 import com.google.common.collect.Lists;
 import org.junit.Test;
+import parser.exceptions.GenerationException;
 import parser.literals.Operator;
 import parser.operations.BoolOperation;
 import parser.operations.MathOperation;
@@ -23,7 +24,7 @@ import static org.junit.Assert.assertTrue;
 public class OperationTest {
 
     @Test
-    public void testConstValue() {
+    public void testConstValue() throws GenerationException {
         //given
         String VALUE = "3";
         MathOperation c = new Const(VALUE);

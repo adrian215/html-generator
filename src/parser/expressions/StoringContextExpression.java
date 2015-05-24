@@ -1,14 +1,16 @@
 package parser.expressions;
 
+import parser.exceptions.GenerationException;
+
 /**
  * Created by Adrian on 2015-05-23.
  */
 public abstract class StoringContextExpression extends Expression {
 
-    protected abstract void call();
+    protected abstract void call() throws GenerationException;
 
     @Override
-    public void process() {
+    public void process() throws GenerationException {
         storeContext();
         call();
         restoreContext();

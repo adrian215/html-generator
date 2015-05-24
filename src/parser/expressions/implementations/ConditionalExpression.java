@@ -1,5 +1,6 @@
 package parser.expressions.implementations;
 
+import parser.exceptions.GenerationException;
 import parser.expressions.Expression;
 import parser.expressions.StoringContextExpression;
 import parser.operations.BoolOperation;
@@ -19,7 +20,7 @@ public class ConditionalExpression extends StoringContextExpression {
     }
 
     @Override
-    protected void call() {
+    protected void call() throws GenerationException {
         if (condition.get()) {
             statements.process();
         }

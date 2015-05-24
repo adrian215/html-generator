@@ -154,7 +154,7 @@ public class Parser {
     }
 
     private Expression loop() throws BadTokenException {
-        Operation from, to;
+        MathOperation from, to;
         Expression statements;
         if(accept(FOR)){
             advance();
@@ -181,7 +181,7 @@ public class Parser {
     }
 
     private Expression conditional() throws BadTokenException {
-        Operation condition;
+        BoolOperation condition;
         Expression statements;
         if(accept(IF))
         {

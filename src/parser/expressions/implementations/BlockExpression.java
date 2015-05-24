@@ -15,9 +15,10 @@ public class BlockExpression extends StoringContextExpression {
         this.expressions = expressions;
     }
 
-    //TODO implement block call
     @Override
     protected void call() {
-
+        for (Expression expression : expressions) {
+            expression.process();
+        }
     }
 }

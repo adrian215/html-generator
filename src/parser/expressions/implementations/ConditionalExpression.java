@@ -2,31 +2,26 @@ package parser.expressions.implementations;
 
 import parser.expressions.Expression;
 import parser.expressions.StoringContextExpression;
+import parser.operations.BoolOperation;
+import parser.operations.MathOperation;
 import parser.operations.Operation;
 
 /**
  * Created by Adrian on 2015-05-16.
  */
 public class ConditionalExpression extends StoringContextExpression {
-    private final Operation condition;
+    private final BoolOperation condition;
     private final Expression statements;
 
-    public ConditionalExpression(Operation condition, Expression statements) {
+    public ConditionalExpression(BoolOperation condition, Expression statements) {
         this.condition = condition;
         this.statements = statements;
     }
 
-    //TODO implement conditional call
     @Override
     protected void call() {
-
-    }
-
-    public Operation getCondition() {
-        return condition;
-    }
-
-    public Expression getStatements() {
-        return statements;
+        if (condition.get()) {
+            statements.process();
+        }
     }
 }

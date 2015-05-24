@@ -173,6 +173,21 @@ public class GenerationTest {
     }
 
     @Test
+    public void testLoopBadArgs() throws Exception {
+        //given
+        final String START = "s";
+        final String STOP = "5";
+        MathOperation from = new Const(START);
+        MathOperation to = new Const(STOP);
+        Expression statement = mock(Expression.class);
+        LoopExpression loop = new LoopExpression(from, to, statement);
+        //when
+        loop.process();
+        //then
+        verify(statement, never()).process();
+    }
+
+    @Test
     public void testBlockOfExpressions() throws Exception {
         //given
         Expression exp1 = mock(Expression.class);

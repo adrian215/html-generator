@@ -21,14 +21,17 @@ public class LoopExpression extends StoringContextExpression {
 
     @Override
     protected void call() {
-        int start = Integer.parseInt(from.get());
-        int stop = Integer.parseInt(to.get());
-        int from = lower(start, stop);
-        int to = higher(start, stop);
-        for (int i = from; i <= to; i++) {
-            statements.process();
+        try {
+            int start = Integer.parseInt(from.get());
+            int stop = Integer.parseInt(to.get());
+            int from = lower(start, stop);
+            int to = higher(start, stop);
+            for (int i = from; i <= to; i++) {
+                statements.process();
+            }
+        } catch (NumberFormatException e){
+            // bad argument, loop should not execute
         }
-
     }
 
     private int higher(int start, int stop) {

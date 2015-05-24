@@ -201,6 +201,27 @@ public class ParserTest {
     }
 
     @Test
+    public void loopConstTest() throws BadTokenException {
+        List<Token> tokens = Lists.newArrayList(
+                new Token(START, "<@"),
+                new Token(FOR, "for"),
+                new Token(OPEN_BRACKET, "("),
+                new Token(NUMERIC, "1"),
+                new Token(TO, "to"),
+                new Token(NUMERIC, "2"),
+                new Token(CLOSE_BRACKET, ")"),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "jeszczeInnaZmienna"),
+                new Token(ASSIGN, "="),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "jeszczeInnaZmienna2"),
+                new Token(STOP, "@>")
+        );
+        Parser parser = new Parser(tokens);
+        Expression parse = parser.parse();
+    }
+
+    @Test
     public void callMethodNoArgsTest() throws BadTokenException {
         List<Token> tokens = Lists.newArrayList(
                 new Token(START, "<@"),

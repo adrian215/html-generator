@@ -162,12 +162,12 @@ public class Parser {
                 advance();
             else
                 throw new BadTokenException();
-            from = variableCall();
+            from = operation();
             if(accept(TO))
                 advance();
             else
                 throw new BadTokenException();
-            to = variableCall();
+            to = operation();
             if(accept(CLOSE_BRACKET))
                 advance();
             else

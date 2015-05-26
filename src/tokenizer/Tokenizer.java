@@ -1,17 +1,16 @@
 package tokenizer;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * Created by Adrian on 2015-05-12.
  */
 public class Tokenizer {
+    public static final String START_TOKEN = "<@";
+    public static final String STOP_TOKEN = "@>";
     private final Map<String, TokenType> tokens = createTokenMap();
 
-    private Map<String, TokenType> createTokenMap() {
+    private final Map<String, TokenType> createTokenMap() {
         Map<String, TokenType> resultMap = new HashMap<>();
             resultMap.put("<@", TokenType.START);
             resultMap.put("@>", TokenType.STOP);
@@ -56,8 +55,10 @@ public class Tokenizer {
 
     private StringBuilder buffer = new StringBuilder();
     private List<Token> tokenResult = new ArrayList<>();
-    Reader reader;
-    char c;
+    private Reader reader;
+    private boolean rewriting = true;
+    private char c;
+    private Optional<Character> lastChar = Optional.empty();
 
     public Tokenizer(String input) {
         this.reader = new Reader(input);
@@ -67,25 +68,46 @@ public class Tokenizer {
         do {
             c = reader.getChar();
 
-            if (CharacterTools.isSpace(c)) {
+        if(rewriting) {
+            if (isOpen(lastChar, c)) {
                 flushBuffer(buffer);
                 clear(buffer);
+                buffer.append(lastChar.get());
+                buffer.append(c);
+                flushBuffer(buffer);
+                clear(buffer);
+                lastChar = Optional.empty();
                 reader.move();
-
+            } else {
+                lastChar.ifPresent(ch -> buffer.append(ch));
+                if (lastChar.isPresent() && lastChar.get() == '/') {
+                    lastChar = Optional.empty();
+                    buffer.append(c);
+                }else {
+                    lastChar = Optional.of(c);
+                }
+                reader.move();
             }
-            else if (tokensContains(buffer.toString())) {
-                if (tokensContains(buffer.toString() + reader.getChar())) {
-                    buffer.append(reader.getChar());
-                    reader.move();
-                } else if(tokenEquals(buffer)) {
+        } else {
+                if (CharacterTools.isSpace(c)) {
                     flushBuffer(buffer);
                     clear(buffer);
-                    buffer.append(reader.getChar());
                     reader.move();
-                }
-                else dispatchDefault();
-            } else dispatchDefault();
 
+                }
+                else if (tokensContains(buffer.toString())) {
+                    if (tokensContains(buffer.toString() + reader.getChar())) {
+                        buffer.append(reader.getChar());
+                        reader.move();
+                    } else if(tokenEquals(buffer)) {
+                        flushBuffer(buffer);
+                        clear(buffer);
+                        buffer.append(reader.getChar());
+                        reader.move();
+                    }
+                    else dispatchDefault();
+                } else dispatchDefault();
+            }
             if (!reader.canMove()) {
                 flushBuffer(buffer);
                 clear(buffer);
@@ -93,6 +115,16 @@ public class Tokenizer {
         } while (reader.canMove());
         return tokenResult;
 
+    }
+
+    private boolean isOpen(Optional<Character> lastChar, char c) {
+        if (!lastChar.isPresent()) {
+            return false;
+        }
+        String token = "";
+        token += lastChar.get();
+        token += c;
+        return START_TOKEN.equals(token);
     }
 
     private void dispatchDefault() {
@@ -133,14 +165,30 @@ public class Tokenizer {
     private void flushBuffer(StringBuilder buffer) {
         if (!isEmpty(buffer)) {
             if (tokens.containsKey(buffer.toString())) {
-                tokenResult.add(new Token(tokens.get(buffer.toString()), buffer.toString()));
+                Token token = new Token(tokens.get(buffer.toString()), buffer.toString());
+                tokenResult.add(token);
+                checkChangeMode(token);
             }
             else if (buffer.toString().matches("[0-9]+")){
                 tokenResult.add(new Token(TokenType.NUMERIC, buffer.toString()));
             }
             else
-                tokenResult.add(new Token(TokenType.OTHER, buffer.toString()));
+                tokenResult.add(new Token(getDefaultTokenType(), buffer.toString()));
         }
+    }
+
+    private TokenType getDefaultTokenType() {
+        if(rewriting)
+            return TokenType.PRINT;
+        else
+            return TokenType.OTHER;
+    }
+
+    private void checkChangeMode(Token token) {
+        if(token.getType() == TokenType.START)
+            rewriting = false;
+        if(token.getType() == TokenType.STOP)
+            rewriting = true;
     }
 
     private boolean isEmpty(StringBuilder buffer) {

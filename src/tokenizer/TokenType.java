@@ -30,5 +30,6 @@ public enum TokenType {
     AND,                // and
     OR,                 // or
     NUMERIC,
-    OTHER
+    OTHER,
+    PRINT
 }

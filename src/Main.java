@@ -10,7 +10,11 @@ import java.util.List;
 public class Main {
 
 //    public static final String HELLO_WORLD = "Hello <@if(/$alfa == 25 and $beta == true) {zrob\"cos\" };@>!!";
-    public static final String HELLO_WORLD = "<@ if($zmienna == 12 or $inna==\"a\" and $jeszczeinna==$inna) $a=12 @>";
+    public static final String HELLO_WORLD = "a <@{" +
+        "$var = 12;" +
+        "if($var == 12) $a=12;" +
+        "@> a tu cos jeszcze innego <@" +
+        "}@>";
 
     public static void main(String[] args) {
         Expression parseProduction;

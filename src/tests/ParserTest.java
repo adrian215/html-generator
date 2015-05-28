@@ -26,7 +26,8 @@ public class ParserTest {
                 new Token(QUOTES, "\""),
                 new Token(OTHER, "wartosc"),
                 new Token(QUOTES, "\""),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -52,7 +53,8 @@ public class ParserTest {
                 new Token(QUOTES, "\""),
                 new Token(SEMICOLON, ";"),
                 new Token(CLOSE_CURLY_BRACES, "}"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -66,7 +68,8 @@ public class ParserTest {
                 new Token(OTHER, "name"),
                 new Token(ASSIGN, "="),
                 new Token(NUMERIC, "123"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -81,7 +84,8 @@ public class ParserTest {
                 new Token(ASSIGN, "="),
                 new Token(DOLLAR, "$"),
                 new Token(OTHER, "innaZmienna"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -104,7 +108,8 @@ public class ParserTest {
                 new Token(PLUS, "+"),
                 new Token(DOLLAR, "$"),
                 new Token(OTHER, "jeszczeInnaZmienna"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -134,7 +139,8 @@ public class ParserTest {
                 new Token(ASSIGN, "="),
                 new Token(DOLLAR, "$"),
                 new Token(OTHER, "jeszczeInnaZmienna2"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -171,7 +177,8 @@ public class ParserTest {
                 new Token(NUMERIC, "12"),
                 new Token(SEMICOLON, ";"),
                 new Token(CLOSE_CURLY_BRACES, "}"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -194,7 +201,8 @@ public class ParserTest {
                 new Token(ASSIGN, "="),
                 new Token(DOLLAR, "$"),
                 new Token(OTHER, "jeszczeInnaZmienna2"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -215,7 +223,8 @@ public class ParserTest {
                 new Token(ASSIGN, "="),
                 new Token(DOLLAR, "$"),
                 new Token(OTHER, "jeszczeInnaZmienna2"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -228,7 +237,8 @@ public class ParserTest {
                 new Token(OTHER, "name"),
                 new Token(OPEN_BRACKET, "("),
                 new Token(CLOSE_BRACKET, ")"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -243,7 +253,8 @@ public class ParserTest {
                 new Token(DOLLAR, "$"),
                 new Token(OTHER, "name"),
                 new Token(CLOSE_BRACKET, ")"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -262,7 +273,8 @@ public class ParserTest {
                 new Token(OTHER, "text"),
                 new Token(QUOTES, "\""),
                 new Token(CLOSE_BRACKET, ")"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();
@@ -287,7 +299,29 @@ public class ParserTest {
                 new Token(QUOTES, "\""),
                 new Token(SEMICOLON, ";"),
                 new Token(CLOSE_CURLY_BRACES, "}"),
-                new Token(STOP, "@>")
+                new Token(STOP, "@>"),
+                new Token(END, "END")
+        );
+        Parser parser = new Parser(tokens);
+        Expression parse = parser.parse();
+    }
+
+    @Test
+    public void ScriptTest() throws Exception {
+        List<Token> tokens = Lists.newArrayList(
+                new Token(PRINT, "jakis tekst"),
+                new Token(START, "<@"),
+                new Token(OPEN_CURLY_BRACES, "{"),
+                new Token(DOLLAR, "$"),
+                new Token(OTHER, "name"),
+                new Token(ASSIGN, "="),
+                new Token(QUOTES, "\""),
+                new Token(OTHER, "wartosc"),
+                new Token(QUOTES, "\""),
+                new Token(SEMICOLON, ";"),
+                new Token(CLOSE_CURLY_BRACES, "}"),
+                new Token(STOP, "@>"),
+                new Token(END, "END")
         );
         Parser parser = new Parser(tokens);
         Expression parse = parser.parse();

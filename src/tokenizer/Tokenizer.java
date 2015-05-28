@@ -7,7 +7,6 @@ import java.util.*;
  */
 public class Tokenizer {
     public static final String START_TOKEN = "<@";
-    public static final String STOP_TOKEN = "@>";
     private final Map<String, TokenType> tokens = createTokenMap();
 
     private final Map<String, TokenType> createTokenMap() {
@@ -109,10 +108,12 @@ public class Tokenizer {
                 } else dispatchDefault();
             }
             if (!reader.canMove()) {
+                if(rewriting && lastChar.isPresent()) buffer.append(lastChar.get());
                 flushBuffer(buffer);
                 clear(buffer);
             }
         } while (reader.canMove());
+        tokenResult.add(new Token(TokenType.END, "END"));
         return tokenResult;
 
     }

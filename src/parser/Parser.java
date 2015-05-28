@@ -30,15 +30,25 @@ public class Parser {
     }
 
     public Expression parse() throws BadTokenException {
-        return script();
+        return new BlockExpression(script());
     }
 
-    private Expression script() throws BadTokenException {
-        Expression exp;
-        start();
-        exp = block();
-        stop();
-        return exp;
+    private List<Expression> script() throws BadTokenException {
+        List<Expression> expressions = new ArrayList<>();
+        while (!accept(END)) {
+            if (accept(PRINT)) {
+                expressions.add(print());
+            } else {
+                start();
+                expressions.add(block());
+                stop();
+            }
+        }
+//        Expression exp;
+//        start();
+//        exp = block();
+//        stop();
+        return expressions;
     }
 
     private boolean accept(TokenType expected) {
@@ -75,7 +85,7 @@ public class Parser {
             case EQUALS:
                 return Operator.EQUALS;
             default:
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
         }
     }
 
@@ -90,12 +100,12 @@ public class Parser {
                 if (accept(SEMICOLON)) {
                     advance();
                 } else
-                    throw new BadTokenException();
+                    throw new BadTokenException(getParameter());
             }
             if (accept(CLOSE_CURLY_BRACES))
                 advance();
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
         } else {
             Expression exp = statement();
             expressions.add(exp);
@@ -111,11 +121,12 @@ public class Parser {
         check(operationResult, this::conditional);
         check(operationResult, this::loop);
         check(operationResult, this::call);
+        check(operationResult, this::print);
         if(operationResult.getFirstValue()) {
             return operationResult.getSecondValue();
         }
         else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
     }
 
     private Expression call() throws BadTokenException {
@@ -125,16 +136,36 @@ public class Parser {
         if(accept(OPEN_BRACKET))
             advance();
         else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
 
         params = callParams();
 
         if(accept(CLOSE_BRACKET))
             advance();
         else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
 
         return new CallExpression(methodName, params);
+    }
+
+    private Expression print() throws BadTokenException {
+        String result;
+        if (accept(PRINT)) {
+            result = getParameter();
+            advance();
+            return new PrintExpression(result);
+        } else if (accept(STOP)) {
+            stop();
+            Expression printExpression = print();
+            start();
+            return printExpression;
+        } else {
+        }
+            throw new BadTokenException(getParameter());
+    }
+
+    private String getParameter() {
+        return getToken().getParameter();
     }
 
     private List<MathOperation> callParams() throws BadTokenException {
@@ -161,23 +192,23 @@ public class Parser {
             if(accept(OPEN_BRACKET))
                 advance();
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
             from = operation();
             if(accept(TO))
                 advance();
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
             to = operation();
             if(accept(CLOSE_BRACKET))
                 advance();
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
             statements = block();
 
             return new LoopExpression(from, to, statements);
         }
         else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
     }
 
     private Expression conditional() throws BadTokenException {
@@ -189,14 +220,14 @@ public class Parser {
             if(accept(OPEN_BRACKET))
                 advance();
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
 
             condition = booleanOperation();
 
             if(accept(CLOSE_BRACKET))
                 advance();
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
 
             statements = block();
 
@@ -204,7 +235,7 @@ public class Parser {
 
         }
         else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
     }
 
     private DeclarationExpression declaration() throws BadTokenException {
@@ -217,18 +248,18 @@ public class Parser {
             if(accept(OPEN_BRACKET))
                 advance();
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
 
             declarationParams = declarationParams();
 
             if(accept(CLOSE_BRACKET))
                 advance();
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
             statements = block();
         }
         else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
         return new DeclarationExpression(declarationName, declarationParams, statements);
     }
 
@@ -240,7 +271,7 @@ public class Parser {
             if(accept(COMMA))
                 advance();
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
             String param = variableName();
             params.add(param);
         }
@@ -255,7 +286,7 @@ public class Parser {
             value = operation();
         }
         else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
         return new AssignExpression(variableName, value);
     }
 
@@ -288,25 +319,25 @@ public class Parser {
     private MathOperation terminal() throws BadTokenException {
         MathOperation result;
         if (accept(NUMERIC)) {
-            result = new Const(getToken().getParameter());
+            result = new Const(getParameter());
             advance();
             return result;
         }
         else if(accept(QUOTES)){
             advance();
             if(accept(OTHER)) {
-                result = new Const(getToken().getParameter());
+                result = new Const(getParameter());
                 advance();
             }
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
 
             if(accept(QUOTES)){
                 advance();
                 return result;
             }
             else
-                throw new BadTokenException();
+                throw new BadTokenException(getParameter());
         }
         else
             return variableCall();
@@ -356,7 +387,7 @@ public class Parser {
         if(accept(QUOTES))
             advance();
         else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
     }
 
     private String variableName() throws BadTokenException {
@@ -365,37 +396,41 @@ public class Parser {
             advance();
             variableName = getName();
         } else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
         return variableName;
     }
 
     private String getName() throws BadTokenException {
         String name;
         if (accept(OTHER)) {
-            name = getToken().getParameter();
+            name = getParameter();
             advance();
             return name;
         } else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
     }
 
     private void start() throws BadTokenException {
         if (accept(START))
             advance();
         else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
     }
 
     private void stop() throws BadTokenException {
         if (accept(STOP))
             advance();
         else
-            throw new BadTokenException();
+            throw new BadTokenException(getParameter());
     }
 
     private void advance() {
         if(tokenIterator.hasNext())
             currentToken = tokenIterator.next();
+    }
+
+    private boolean canAdvance(){
+        return tokenIterator.hasNext();
     }
 
     private Token getToken() {
